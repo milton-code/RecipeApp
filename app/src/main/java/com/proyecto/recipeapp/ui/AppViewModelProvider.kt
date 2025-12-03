@@ -6,6 +6,8 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.proyecto.recipeapp.RecipeApplication
+import com.proyecto.recipeapp.ui.category.CategoryViewModel
+import com.proyecto.recipeapp.ui.categoryMeals.CategoryMealsViewModel
 import com.proyecto.recipeapp.ui.detail.DetailViewModel
 import com.proyecto.recipeapp.ui.home.HomeViewModel
 
@@ -13,13 +15,24 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
             HomeViewModel(
-                this.recipeApplication().container.mealRepository
+                recipeApplication().container.mealRepository//this.
             )
         }
         initializer {
             DetailViewModel(
                 recipeApplication().container.mealRepository,
                 this.createSavedStateHandle(),
+            )
+        }
+        initializer {
+            CategoryViewModel(
+                recipeApplication().container.mealRepository
+            )
+        }
+        initializer {
+            CategoryMealsViewModel(
+                recipeApplication().container.mealRepository,
+                this.createSavedStateHandle()
             )
         }
     }

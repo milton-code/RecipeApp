@@ -33,13 +33,13 @@ import com.proyecto.recipeapp.ui.AppViewModelProvider
 import com.proyecto.recipeapp.ui.RecipeTopAppBar
 import com.proyecto.recipeapp.ui.detail.DetailViewModel.DetailUiState
 import com.proyecto.recipeapp.ui.extras.ErrorScreen
-import com.proyecto.recipeapp.ui.extras.LoadingMeal
+import com.proyecto.recipeapp.ui.extras.LoadingImage
 import com.proyecto.recipeapp.ui.extras.LoadingScreen
 import com.proyecto.recipeapp.ui.navigation.NavigationDestination
 
 object DetailDestination : NavigationDestination {
     override val route: String = "Detail/{mealId}"
-    override val titleRes: Int = 0
+    override val titleRes = 0
     const val mealIdArg = "mealId"
 }
 
@@ -111,7 +111,7 @@ fun MealDetail(
                 modifier = Modifier.fillMaxWidth(0.8f),
                 contentScale = ContentScale.Fit,
                 loading = {
-                    LoadingMeal()
+                    LoadingImage()
                 },
                 error = {
                     Icon(

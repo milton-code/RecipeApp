@@ -26,9 +26,9 @@ class HomeViewModel(private val repository: MealRepository): ViewModel() {
     }
     private val _homeUiState: MutableStateFlow<HomeUiState> = MutableStateFlow(HomeUiState.Loading)
     val homeUiState = _homeUiState.asStateFlow()
-    val searchQuery = MutableStateFlow("")
     var isFocused by mutableStateOf(false)
         private set
+    val searchQuery = MutableStateFlow("")
 
     init {
         onSearchQueryChange()
@@ -65,7 +65,7 @@ class HomeViewModel(private val repository: MealRepository): ViewModel() {
         }
     }
 
-    fun getMealsByMainIngredient(mainIngredient: String) {
+    /*fun getMealsByMainIngredient(mainIngredient: String) {
         viewModelScope.launch(Dispatchers.Default) {
             try {
                 val mealsList = repository.getMealsByMainIngredient(mainIngredient).meals
@@ -78,5 +78,5 @@ class HomeViewModel(private val repository: MealRepository): ViewModel() {
                 _homeUiState.value = HomeUiState.Error
             }
         }
-    }
+    }*/
 }

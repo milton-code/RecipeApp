@@ -31,7 +31,7 @@ import com.proyecto.recipeapp.R
 
 
 @Composable
-fun LoadingMeal() {
+fun LoadingImage() {
     Box(modifier = Modifier.padding(25.dp),
         contentAlignment = Alignment.Center) {
         CircularProgressIndicator(
@@ -42,9 +42,11 @@ fun LoadingMeal() {
 
 }
 @Composable
-fun MealItem(meal: Meal,
-             navigateTo: () -> Unit,
-             modifier: Modifier = Modifier) {
+fun MealItem(
+    meal: Meal,
+    navigateTo: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
     Card(
         onClick = navigateTo,
         shape = CircleShape
@@ -68,7 +70,7 @@ fun MealItem(meal: Meal,
                 contentScale = ContentScale.Crop,
                 contentDescription = "Recipe",
                 loading = {
-                    LoadingMeal()
+                    LoadingImage()
                 },
                 error = {
                     Icon(

@@ -1,21 +1,12 @@
-package com.proyecto.recipeapp.ui.home
-
+package com.proyecto.recipeapp.ui.category
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Category
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,60 +20,59 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.proyecto.recipeapp.R
+import com.proyecto.recipeapp.data.models.Category
 import com.proyecto.recipeapp.data.models.Meal
 import com.proyecto.recipeapp.ui.AppViewModelProvider
 import com.proyecto.recipeapp.ui.RecipeTopAppBar
-import com.proyecto.recipeapp.ui.category.CategoryDestination
+import com.proyecto.recipeapp.ui.category.CategoryViewModel.CategoryUiState
+import com.proyecto.recipeapp.ui.categoryMeals.CategoryMealsDestination
 import com.proyecto.recipeapp.ui.detail.DetailDestination
+import com.proyecto.recipeapp.ui.extras.CategoryItem
 import com.proyecto.recipeapp.ui.extras.ErrorScreen
 import com.proyecto.recipeapp.ui.extras.LoadingScreen
 import com.proyecto.recipeapp.ui.extras.MealItem
-import com.proyecto.recipeapp.ui.extras.SearchBar
-import com.proyecto.recipeapp.ui.home.HomeViewModel.HomeUiState
 import com.proyecto.recipeapp.ui.navigation.NavigationDestination
-import com.proyecto.recipeapp.data.models.chipList
-import com.proyecto.recipeapp.ui.extras.ChipRenderer
 
-object HomeDestination : NavigationDestination {
-    override val route = "Home"
-    override val titleRes = R.string.app_name
+object CategoryDestination : NavigationDestination {
+    override val route = "Categories"
+    override val titleRes = R.string.categories
 }
 
 @Composable
-fun HomeScreen(
+fun CategoryScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    navigateBack: () -> Unit,
+    viewModel: CategoryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val uiState = viewModel.homeUiState.collectAsState()
+    val uiState = viewModel.categoryUiState.collectAsState()
     LaunchedEffect(Unit) {
-        viewModel.getMealsByName(viewModel.searchQuery.value)
+        viewModel.getCategories()
     }
 
     Scaffold(
         topBar = {
             RecipeTopAppBar(
-                title = stringResource(HomeDestination.titleRes),
-                canNavigateBack = false
+                title = stringResource(CategoryDestination.titleRes),
+                canNavigateBack = true,
+                navigateUp = navigateBack
             )
         }
     ) { innerPadding ->
         when (uiState.value) {
-            HomeUiState.Loading -> LoadingScreen(
+            CategoryUiState.Loading -> LoadingScreen(
                 modifier
                     .padding(innerPadding)
             )
-
-            HomeUiState.Error -> ErrorScreen(
+            CategoryUiState.Error -> ErrorScreen(
                 modifier = modifier
                     .padding(innerPadding),
                 retryAction = {
-                    viewModel.getMealsByName(viewModel.searchQuery.value)
+                    viewModel.getCategories()
                 }
             )
-
-            is HomeUiState.Success -> HomeSuccess(
-                mealList = (uiState.value as HomeUiState.Success).meals,
+            is CategoryUiState.Success -> CategorySuccess(
+                categoryList = (uiState.value as CategoryUiState.Success).categories,
                 navController = navController,
                 viewModel = viewModel,
                 modifier = modifier.padding(innerPadding)
@@ -93,39 +83,22 @@ fun HomeScreen(
 
 
 @Composable
-fun HomeSuccess(
-    mealList: List<Meal>?,
+fun CategorySuccess(
+    categoryList: List<Category>?,
     navController: NavHostController,
-    viewModel: HomeViewModel,
+    viewModel: CategoryViewModel,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier) {
-        SearchBar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            viewModel = viewModel
-        )
-        LazyRow (modifier = Modifier
-            .padding(horizontal = 20.dp, vertical = 10.dp)
-            .fillMaxWidth()){
-            items(items = chipList) { chipItem ->
-                ChipRenderer(chipItem = chipItem, navController = navController)
-                Spacer(modifier = Modifier.width(10.dp))
-            }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        if (mealList != null) {
+    Box(modifier = modifier) {
+        if (categoryList != null) {
             LazyColumn(
                 modifier = Modifier.padding(horizontal = 20.dp)
             ) {
-                items(items = mealList) { meal ->
-                    MealItem(
-                        meal = meal,
+                items(items = categoryList) { category ->
+                    CategoryItem(
+                        category = category,
                         navigateTo = {
-                            navController.navigate(
-                                "${DetailDestination.route.substringBefore("/")}/${meal.idMeal}"
-                            )
+                            navController.navigate("${CategoryMealsDestination.route.substringBefore("/")}/${category.strCategory}")
                         }
                     )
                     Spacer(modifier = Modifier.height(30.dp))
@@ -137,7 +110,7 @@ fun HomeSuccess(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = stringResource(R.string.no_meals_found),
+                    text = "No categories found",
                     color = Color.Gray
                 )
             }
@@ -145,3 +118,31 @@ fun HomeSuccess(
     }
 }
 
+@Composable
+fun SuccessMeal(
+    mealList: List<Meal>?,
+    modifier: Modifier = Modifier
+) {
+    Box(modifier = modifier) {
+        if (mealList != null) {
+            LazyColumn(
+                modifier = Modifier.padding(horizontal = 20.dp)
+            ) {
+                items(items = mealList) { meal ->
+                    MealItem(meal = meal)
+                    Spacer(modifier = Modifier.height(30.dp))
+                }
+            }
+        } else {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "No meals found",
+                    color = Color.Gray
+                )
+            }
+        }
+    }
+}

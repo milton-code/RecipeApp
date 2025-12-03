@@ -6,4 +6,10 @@
     <string name="connection_error">Connection Error</string>
     <string name="search_recipes">Search recipes...</string>
     <string name="no_meals_found">No meals found</string>
+    <!-- Chip List -->
+    <string name="categories">Categories</string>
+    <string name="favorites">Favorites</string>
+    <string name="my_recipes">My Recipes</string>
+    <string name="country">Country</string>
+
 </resources>
