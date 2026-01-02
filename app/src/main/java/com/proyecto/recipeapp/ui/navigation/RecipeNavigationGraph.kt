@@ -8,6 +8,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.proyecto.recipeapp.ui.addRecipe.AddRecipeDestination
+import com.proyecto.recipeapp.ui.addRecipe.AddRecipeScreen
 import com.proyecto.recipeapp.ui.category.CategoryDestination
 import com.proyecto.recipeapp.ui.category.CategoryScreen
 import com.proyecto.recipeapp.ui.categoryMeals.CategoryMealsDestination
@@ -62,6 +64,13 @@ fun RecipeNavHost(
                 modifier = Modifier.fillMaxSize(),
                 navController = navController,
                 navigateBack = { navController.navigateUp() },
+            )
+        }
+        composable(route = AddRecipeDestination.route) {
+            AddRecipeScreen(
+                modifier = Modifier.fillMaxSize(),
+                navController = navController,
+                navigateBack = {navController.navigateUp()}
             )
         }
     }

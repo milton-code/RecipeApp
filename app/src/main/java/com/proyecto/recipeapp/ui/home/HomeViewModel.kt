@@ -1,5 +1,6 @@
 package com.proyecto.recipeapp.ui.home
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -26,9 +27,11 @@ class HomeViewModel(private val repository: MealRepository): ViewModel() {
     }
     private val _homeUiState: MutableStateFlow<HomeUiState> = MutableStateFlow(HomeUiState.Loading)
     val homeUiState = _homeUiState.asStateFlow()
+
     var isFocused by mutableStateOf(false)
         private set
     val searchQuery = MutableStateFlow("")
+
 
     init {
         onSearchQueryChange()
@@ -65,18 +68,4 @@ class HomeViewModel(private val repository: MealRepository): ViewModel() {
         }
     }
 
-    /*fun getMealsByMainIngredient(mainIngredient: String) {
-        viewModelScope.launch(Dispatchers.Default) {
-            try {
-                val mealsList = repository.getMealsByMainIngredient(mainIngredient).meals
-                if (mealsList != null) {
-                    _homeUiState.value = HomeUiState.Success(mealsList)
-                } else {
-                    _homeUiState.value = HomeUiState.Error
-                }
-            } catch (e: IOException) {
-                _homeUiState.value = HomeUiState.Error
-            }
-        }
-    }*/
 }

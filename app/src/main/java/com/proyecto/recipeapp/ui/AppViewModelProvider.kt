@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.proyecto.recipeapp.RecipeApplication
+import com.proyecto.recipeapp.ui.addRecipe.AddRecipeViewModel
 import com.proyecto.recipeapp.ui.category.CategoryViewModel
 import com.proyecto.recipeapp.ui.categoryMeals.CategoryMealsViewModel
 import com.proyecto.recipeapp.ui.detail.DetailViewModel
@@ -33,6 +34,11 @@ object AppViewModelProvider {
             CategoryMealsViewModel(
                 recipeApplication().container.mealRepository,
                 this.createSavedStateHandle()
+            )
+        }
+        initializer {
+            AddRecipeViewModel(
+                recipeApplication().container.mealRepository
             )
         }
     }

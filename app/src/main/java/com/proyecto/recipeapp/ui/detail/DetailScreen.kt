@@ -79,6 +79,7 @@ fun DetailSuccess(
             RecipeTopAppBar(
                 title = meal.strMeal,
                 canNavigateBack = true,
+                showFavoriteIcon = true,
                 navigateUp = navigateBack
             )
         }

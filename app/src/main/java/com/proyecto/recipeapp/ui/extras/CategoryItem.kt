@@ -24,11 +24,12 @@ import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.proyecto.recipeapp.R
+import com.proyecto.recipeapp.data.local.entities.CategoryEntity
 import com.proyecto.recipeapp.data.models.Category
 
 @Composable
 fun CategoryItem(
-    category: Category,
+    category: CategoryEntity,
     navigateTo: () -> Unit,
     modifier: Modifier = Modifier
 ) {

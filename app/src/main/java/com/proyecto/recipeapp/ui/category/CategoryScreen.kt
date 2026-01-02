@@ -20,13 +20,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.proyecto.recipeapp.R
-import com.proyecto.recipeapp.data.models.Category
+import com.proyecto.recipeapp.data.local.entities.CategoryEntity
 import com.proyecto.recipeapp.data.models.Meal
 import com.proyecto.recipeapp.ui.AppViewModelProvider
 import com.proyecto.recipeapp.ui.RecipeTopAppBar
 import com.proyecto.recipeapp.ui.category.CategoryViewModel.CategoryUiState
 import com.proyecto.recipeapp.ui.categoryMeals.CategoryMealsDestination
-import com.proyecto.recipeapp.ui.detail.DetailDestination
 import com.proyecto.recipeapp.ui.extras.CategoryItem
 import com.proyecto.recipeapp.ui.extras.ErrorScreen
 import com.proyecto.recipeapp.ui.extras.LoadingScreen
@@ -46,10 +45,6 @@ fun CategoryScreen(
     viewModel: CategoryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState = viewModel.categoryUiState.collectAsState()
-    LaunchedEffect(Unit) {
-        viewModel.getCategories()
-    }
-
     Scaffold(
         topBar = {
             RecipeTopAppBar(
@@ -64,19 +59,24 @@ fun CategoryScreen(
                 modifier
                     .padding(innerPadding)
             )
+
             CategoryUiState.Error -> ErrorScreen(
                 modifier = modifier
                     .padding(innerPadding),
                 retryAction = {
-                    viewModel.getCategories()
+                    viewModel.refreshCategories()
                 }
             )
+
+            CategoryUiState.Blank -> BlankScreen(modifier.padding(innerPadding))
+
             is CategoryUiState.Success -> CategorySuccess(
-                categoryList = (uiState.value as CategoryUiState.Success).categories,
-                navController = navController,
-                viewModel = viewModel,
-                modifier = modifier.padding(innerPadding)
-            )
+                    categoryList = (uiState.value as CategoryUiState.Success).categories,
+                    navController = navController,
+                    viewModel = viewModel,
+                    modifier = modifier.padding(innerPadding)
+                )
+
         }
     }
 }
@@ -84,13 +84,13 @@ fun CategoryScreen(
 
 @Composable
 fun CategorySuccess(
-    categoryList: List<Category>?,
+    categoryList: List<CategoryEntity>,
     navController: NavHostController,
     viewModel: CategoryViewModel,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier) {
-        if (categoryList != null) {
+
             LazyColumn(
                 modifier = Modifier.padding(horizontal = 20.dp)
             ) {
@@ -98,51 +98,30 @@ fun CategorySuccess(
                     CategoryItem(
                         category = category,
                         navigateTo = {
-                            navController.navigate("${CategoryMealsDestination.route.substringBefore("/")}/${category.strCategory}")
+                            navController.navigate(
+                                "${
+                                    CategoryMealsDestination.route.substringBefore(
+                                        "/"
+                                    )
+                                }/${category.strCategory}"
+                            )
                         }
                     )
                     Spacer(modifier = Modifier.height(30.dp))
                 }
             }
-        } else {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "No categories found",
-                    color = Color.Gray
-                )
-            }
         }
     }
-}
+
 
 @Composable
-fun SuccessMeal(
-    mealList: List<Meal>?,
-    modifier: Modifier = Modifier
-) {
-    Box(modifier = modifier) {
-        if (mealList != null) {
-            LazyColumn(
-                modifier = Modifier.padding(horizontal = 20.dp)
-            ) {
-                items(items = mealList) { meal ->
-                    MealItem(meal = meal)
-                    Spacer(modifier = Modifier.height(30.dp))
-                }
-            }
-        } else {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "No meals found",
-                    color = Color.Gray
-                )
-            }
-        }
+fun BlankScreen(modifier: Modifier = Modifier){
+    Box(modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "No categories found",
+            color = Color.Gray
+        )
     }
 }
