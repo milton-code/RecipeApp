@@ -8,17 +8,18 @@ import com.proyecto.recipeapp.data.models.MealResponse
 import com.proyecto.recipeapp.data.network.MealApiService
 import com.proyecto.recipeapp.ui.addRecipe.MealForm
 import kotlinx.coroutines.flow.Flow
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 class MealRepository(
     private val mealApiService: MealApiService,//Aqui llega la implementacion MealApiService hecha por Retrofit
     private val categoryDao: CategoryDao,//Aqui llega la implementacion CategoryDao hecha por Room
     private val mealDao: MealDao//Aqui llega la implementacion MealDao hecha por Room
 ) {
-    /**
-     *Local
-     */
+    //LOCAL
     //Devuelve un flujo de categorías desde la base de datos local.
     fun getCategoriesStream(): Flow<List<CategoryEntity>> = categoryDao.getAllCategories()
+    fun getMealsStream(): Flow<List<MealEntity>> = mealDao.getAllMeals()
     //Agrega la receta a la tabla "meals" en la base de datos local.
     suspend fun addRecipe(meal: MealForm) {
         val mealEntity = MealEntity(
@@ -31,7 +32,8 @@ class MealRepository(
         )
         mealDao.insertMeal(mealEntity)
     }
-    //fun getLocalMeals(): Flow<List<MealEntity>> = categoryDao.getLocalMeals()
+
+    fun getAllMeals(): Flow<List<MealEntity>> = mealDao.getAllMeals()
 
     /**
      * Refresca las categorías desde la API si la base de datos local está vacía.
@@ -58,9 +60,36 @@ class MealRepository(
         }
     }
 
+    suspend fun refreshMeals() {
+        try {
+            val response = mealApiService.getMealsByName("")
+            val meals = response.meals?: emptyList()
+
+            if (meals.isNotEmpty()) {
+                val entities = meals.map {
+                    MealEntity(
+                        idMeal = it.idMeal,
+                        strMeal = it.strMeal,
+                        strCategory = it.strCategory,
+                        strInstructions = it.strInstructions,
+                        strMealThumb = it.strMealThumb
+                    )
+                }
+                mealDao.insertMeals(entities)
+            } else {
+                throw Exception("isBlank")
+            }
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
     //API
     suspend fun getMealById(id: Int): MealResponse = mealApiService.getMealById(id)
-    suspend fun getMealsByName(name: String): MealResponse = mealApiService.getMealsByName(name)
+    suspend fun getMealsByName(name: String): MealResponse {
+        val encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8.toString())
+        return mealApiService.getMealsByName(name)
+    }
     suspend fun getMealsByCategory(category: String): MealResponse =
         mealApiService.getMealsByCategory(category)
 }

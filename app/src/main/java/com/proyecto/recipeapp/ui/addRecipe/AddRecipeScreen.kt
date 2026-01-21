@@ -1,6 +1,10 @@
 package com.proyecto.recipeapp.ui.addRecipe
 
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
@@ -8,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
@@ -20,7 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -29,12 +33,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.proyecto.recipeapp.R
 import com.proyecto.recipeapp.ui.AppViewModelProvider
 import com.proyecto.recipeapp.ui.RecipeTopAppBar
@@ -76,6 +81,14 @@ fun AddRecipeBody(
     val context = LocalContext.current
     val uiState = viewModel.mealForm.collectAsState()
 
+    // Selector de imágenes
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+            uri?.let { viewModel.updateMealImage(it.toString()) }
+        }
+    )
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.padding(all = 16.dp)
@@ -97,6 +110,33 @@ fun AddRecipeBody(
 
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
 
+        // Botón para seleccionar imagen y vista previa
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            if (uiState.value.mealImage.isNotEmpty()) {
+                AsyncImage(
+                    model = uiState.value.mealImage,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .padding(bottom = 8.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
+            Button(
+                onClick = {
+                    photoPickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = if (uiState.value.mealImage.isEmpty()) "Seleccionar imagen" else "Cambiar imagen")
+            }
+        }
+
+        Spacer(modifier = Modifier.padding(vertical = 8.dp))
+
         OutlinedTextField(
             value = uiState.value.mealInstructions,
             onValueChange = { viewModel.updateMealInstructions(it) },
@@ -104,23 +144,29 @@ fun AddRecipeBody(
             modifier = Modifier
                 .fillMaxWidth()
                 .scrollable(rememberScrollState(), Orientation.Vertical),
-            minLines = 10,
+            minLines = 5,
             maxLines = 10
         )
-        Spacer(modifier = Modifier.padding(vertical = 8.dp))
-        Box(modifier = Modifier.fillMaxSize(),
+
+        Spacer(modifier = Modifier.padding(vertical = 16.dp))
+
+        Box(modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ){
             Button(
                 onClick = {
-                    viewModel.addRecipe()
-                    Toast.makeText(context,"Receta agregada",Toast.LENGTH_SHORT).show()
+                    if (uiState.value.mealName.isBlank() || uiState.value.mealCategory == "Seleccione una categoría") {
+                        Toast.makeText(context, "Por favor, completa los campos obligatorios", Toast.LENGTH_SHORT).show()
+                    } else {
+                        viewModel.addRecipe()
+                        Toast.makeText(context, "Receta agregada", Toast.LENGTH_SHORT).show()
+                    }
                 },
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Add recipe")
+                Text(text = "Guardar receta")
             }
         }
-
     }
 }
 
@@ -134,7 +180,7 @@ fun CategoryDropdown(
 ) {
     val dropdownMenuState = viewModel.dropdownMenuState.collectAsState()
     var isExpanded by remember { mutableStateOf(false) }
-    //var textFieldState by remember { mutableStateOf("Seleccione una categoría") }
+
     ExposedDropdownMenuBox(
         expanded = isExpanded,
         onExpandedChange = { isExpanded = it },
@@ -147,7 +193,6 @@ fun CategoryDropdown(
             readOnly = true,
             label = { Text("Categoría") },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
-            //colors = ExposedDropdownMenuDefaults.textFieldColors(),
         )
         ExposedDropdownMenu(
             expanded = isExpanded,
@@ -156,49 +201,29 @@ fun CategoryDropdown(
             when (dropdownMenuState.value) {
                 DropdownMenuState.Loading -> {
                     DropdownMenuItem(
-                        text = {
-                            Text(
-                                "Cargando categorías...",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        },
+                        text = { Text("Cargando categorías...", style = MaterialTheme.typography.bodyLarge) },
                         onClick = {},
                     )
                 }
                 DropdownMenuState.Error -> {
                     DropdownMenuItem(
-                        text = {
-                            Text(
-                                "Error al cargar categorías",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        },
+                        text = { Text("Error al cargar categorías", style = MaterialTheme.typography.bodyLarge) },
                         onClick = {},
                     )
                 }
                 DropdownMenuState.Blank -> {
                     DropdownMenuItem(
-                        text = {
-                            Text(
-                                "No hay categorías disponibles",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        },
+                        text = { Text("No hay categorías disponibles", style = MaterialTheme.typography.bodyLarge) },
                         onClick = {},
                     )
                 }
                 is DropdownMenuState.Success -> {
-                    val categories = (dropdownMenuState.value as DropdownMenuState.Success).categories.map { it.strCategory }
+                    val categories = (dropdownMenuState.value as DropdownMenuState.Success).categories
                     categories.forEach { category ->
                         DropdownMenuItem(
-                            text = {
-                                Text(
-                                    category,
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            },
+                            text = { Text(category.strCategory, style = MaterialTheme.typography.bodyLarge) },
                             onClick = {
-                                viewModel.updateMealCategory(category)
+                                viewModel.updateMealCategory(category.strCategory)
                                 isExpanded = false
                             },
                         )
@@ -207,13 +232,4 @@ fun CategoryDropdown(
             }
         }
     }
-
-
 }
-
-/*@Preview(showBackground = true)
-@Composable
-fun DropdownTestPreview() {
-    CategoryDropdown(modifier = Modifier.fillMaxSize())
-}*/
-

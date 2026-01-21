@@ -4,8 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proyecto.recipeapp.data.MealRepository
 import com.proyecto.recipeapp.data.local.entities.CategoryEntity
-import com.proyecto.recipeapp.data.models.Category
-import com.proyecto.recipeapp.ui.category.CategoryViewModel.CategoryUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,7 +11,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -90,6 +87,10 @@ class AddRecipeViewModel(private val repository: MealRepository): ViewModel() {
 
     fun updateMealCategory(mealCategory: String) {
         _mealForm.value = _mealForm.value.copy(mealCategory = mealCategory)
+    }
+
+    fun updateMealImage(mealImage: String) {
+        _mealForm.value = _mealForm.value.copy(mealImage = mealImage)
     }
 
     fun updateMealInstructions(mealInstructions: String) {

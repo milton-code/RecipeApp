@@ -25,9 +25,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import com.proyecto.recipeapp.R
 import com.proyecto.recipeapp.data.models.ChipItem
+import com.proyecto.recipeapp.ui.home.HomeViewModel
 
 @Composable
-fun ChipRenderer(chipItem: ChipItem, navController: NavHostController) {
+fun ChipRenderer(
+    chipItem: ChipItem,
+    navController: NavHostController,
+    viewModel: HomeViewModel
+) {
     var selectedMyRecipes by remember { mutableStateOf(false) }
     var selectedFavorites by remember { mutableStateOf(false) }
     when (chipItem) {
@@ -51,7 +56,9 @@ fun ChipRenderer(chipItem: ChipItem, navController: NavHostController) {
                     contentDescription = null
                 )
             },
-            onClick = { selectedMyRecipes = !selectedMyRecipes},
+            onClick = {
+                selectedMyRecipes = !selectedMyRecipes
+                      },
             selected = selectedMyRecipes,
             colors = FilterChipDefaults.filterChipColors(
                 selectedContainerColor = Color(0xFF2D7230),

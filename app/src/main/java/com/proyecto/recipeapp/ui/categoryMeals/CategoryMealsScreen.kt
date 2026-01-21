@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.proyecto.recipeapp.R
+import com.proyecto.recipeapp.data.local.entities.MealEntity
 import com.proyecto.recipeapp.data.models.Meal
 import com.proyecto.recipeapp.ui.AppViewModelProvider
 import com.proyecto.recipeapp.ui.RecipeTopAppBar
@@ -89,8 +90,15 @@ fun CategoryMealsSuccess(
                 modifier = Modifier.padding(horizontal = 20.dp)
             ) {
                 items(items = mealList) { meal ->
+                    val mealEntity = MealEntity(
+                        idMeal = meal.idMeal,
+                        strMeal = meal.strMeal,
+                        strCategory = meal.strCategory,
+                        strInstructions = meal.strInstructions,
+                        strMealThumb = meal.strMealThumb
+                    )
                     MealItem(
-                        meal = meal,
+                        meal = mealEntity,
                         navigateTo = {
                             navController.navigate(
                                 "${DetailDestination.route.substringBefore("/")}/${meal.idMeal}"

@@ -56,7 +56,7 @@ fun SearchBar(
                     .clickable {
                         viewModel.changeFocus(false)
                         focusManager.clearFocus()
-                        viewModel.searchQueryChange("")
+                        viewModel.onSearchQueryChange("")
                     }
             )
         }
@@ -76,7 +76,7 @@ fun SearchBar(
                 modifier = Modifier.fillMaxWidth(),
                 text = viewModel.searchQuery.collectAsState().value,//text
                 onTextChange = {
-                    viewModel.searchQueryChange(it)
+                    viewModel.onSearchQueryChange(it)
                 },
                 onFocusChange = { focusState ->
                     viewModel.changeFocus(focusState)

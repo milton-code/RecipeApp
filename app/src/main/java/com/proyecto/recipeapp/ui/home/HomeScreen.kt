@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.proyecto.recipeapp.R
+import com.proyecto.recipeapp.data.local.entities.MealEntity
 import com.proyecto.recipeapp.data.models.Meal
 import com.proyecto.recipeapp.ui.AppViewModelProvider
 import com.proyecto.recipeapp.ui.RecipeTopAppBar
@@ -55,9 +56,6 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState = viewModel.homeUiState.collectAsState()
-    LaunchedEffect(Unit) {
-        viewModel.getMealsByName(viewModel.searchQuery.value)
-    }
 
     Scaffold(
         topBar = {
@@ -77,7 +75,7 @@ fun HomeScreen(
                 modifier = modifier
                     .padding(innerPadding),
                 retryAction = {
-                    viewModel.getMealsByName(viewModel.searchQuery.value)
+                    viewModel.refreshMeals()
                 }
             )
 
@@ -87,14 +85,26 @@ fun HomeScreen(
                 viewModel = viewModel,
                 modifier = modifier.padding(innerPadding)
             )
+
+            HomeUiState.Blank -> BlankScreen(modifier = Modifier.padding(innerPadding))
         }
     }
 }
 
-
+@Composable
+fun BlankScreen(modifier: Modifier = Modifier){
+    Box(modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "No categories found",
+            color = Color.Gray
+        )
+    }
+}
 @Composable
 fun HomeSuccess(
-    mealList: List<Meal>?,
+    mealList: List<MealEntity>,
     navController: NavHostController,
     viewModel: HomeViewModel,
     modifier: Modifier = Modifier
@@ -110,12 +120,12 @@ fun HomeSuccess(
             .padding(horizontal = 20.dp, vertical = 10.dp)
             .fillMaxWidth()){
             items(items = chipList) { chipItem ->
-                ChipRenderer(chipItem = chipItem, navController = navController)
+                ChipRenderer(chipItem = chipItem, navController = navController, viewModel = viewModel)
                 Spacer(modifier = Modifier.width(10.dp))
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        if (mealList != null) {
+        //if (mealList != null) {
             LazyColumn(
                 modifier = Modifier.padding(horizontal = 20.dp)
             ) {
@@ -131,7 +141,7 @@ fun HomeSuccess(
                     Spacer(modifier = Modifier.height(30.dp))
                 }
             }
-        } else {
+        /*} else {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -141,7 +151,7 @@ fun HomeSuccess(
                     color = Color.Gray
                 )
             }
-        }
+        }*/
     }
 }
 

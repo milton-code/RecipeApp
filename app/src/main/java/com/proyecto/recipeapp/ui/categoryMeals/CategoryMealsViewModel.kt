@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proyecto.recipeapp.data.MealRepository
+import com.proyecto.recipeapp.data.local.entities.MealEntity
 import com.proyecto.recipeapp.data.models.Category
 import com.proyecto.recipeapp.data.models.Meal
 import com.proyecto.recipeapp.ui.detail.DetailDestination

@@ -21,7 +21,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.proyecto.recipeapp.R
 import com.proyecto.recipeapp.data.local.entities.CategoryEntity
-import com.proyecto.recipeapp.data.models.Meal
 import com.proyecto.recipeapp.ui.AppViewModelProvider
 import com.proyecto.recipeapp.ui.RecipeTopAppBar
 import com.proyecto.recipeapp.ui.category.CategoryViewModel.CategoryUiState
@@ -29,7 +28,6 @@ import com.proyecto.recipeapp.ui.categoryMeals.CategoryMealsDestination
 import com.proyecto.recipeapp.ui.extras.CategoryItem
 import com.proyecto.recipeapp.ui.extras.ErrorScreen
 import com.proyecto.recipeapp.ui.extras.LoadingScreen
-import com.proyecto.recipeapp.ui.extras.MealItem
 import com.proyecto.recipeapp.ui.navigation.NavigationDestination
 
 object CategoryDestination : NavigationDestination {
