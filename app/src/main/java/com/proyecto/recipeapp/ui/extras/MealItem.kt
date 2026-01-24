@@ -27,7 +27,7 @@ import com.proyecto.recipeapp.data.models.Meal
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.proyecto.recipeapp.R
-
+import com.proyecto.recipeapp.data.local.entities.MealEntity
 
 
 @Composable
@@ -43,9 +43,8 @@ fun LoadingImage() {
 }
 @Composable
 fun MealItem(
-    meal: Meal,
+    meal: MealEntity,
     navigateTo: () -> Unit = {},
-    modifier: Modifier = Modifier
 ) {
     Card(
         onClick = navigateTo,
@@ -72,13 +71,17 @@ fun MealItem(
                 loading = {
                     LoadingImage()
                 },
-                error = {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_broken_image),
-                        contentDescription = "Error al cargar imagen",
-                        tint = Color.Gray
-                    )
-                }
+                    error = {
+                        Box(modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ){
+                            Icon(
+                                painter = painterResource(R.drawable.ic_broken_image),
+                                contentDescription = "Error al cargar imagen",
+                                tint = Color.Gray
+                            )
+                        }
+                    }
             )
             }
 

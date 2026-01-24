@@ -17,6 +17,8 @@ class MealRepository(
     /**
      *Local
      */
+    fun getMealsStream(): Flow<List<MealEntity>> = mealDao.getAllMeals()
+
     //Devuelve un flujo de categorías desde la base de datos local.
     fun getCategoriesStream(): Flow<List<CategoryEntity>> = categoryDao.getAllCategories()
     //Agrega la receta a la tabla "meals" en la base de datos local.
@@ -53,6 +55,29 @@ class MealRepository(
             } else {
                 throw Exception("isBlank")
             }
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    suspend fun refreshMeals() {
+        try {
+            val response = mealApiService.getMealsByName("")
+            val meals = response.meals?: emptyList()
+            if (meals.isNotEmpty()) {
+                val entities = meals.map {
+                    MealEntity(
+                        idMeal = it.idMeal,
+                        strMeal = it.strMeal,
+                        strCategory = it.strCategory,
+                        strInstructions = it.strInstructions,
+                        strMealThumb = it.strMealThumb
+                    )
+                }
+                mealDao.insertMeals(entities)
+            } /*else {
+                throw Exception("no meals found")
+            }*/
         } catch (e: Exception) {
             throw e
         }
