@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import com.proyecto.recipeapp.data.local.entities.MealEntity
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material3.AssistChip
@@ -55,10 +56,6 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState = viewModel.homeUiState.collectAsState()
-    LaunchedEffect(Unit) {
-        viewModel.getMealsByName(viewModel.searchQuery.value)
-    }
-
     Scaffold(
         topBar = {
             RecipeTopAppBar(
@@ -77,7 +74,7 @@ fun HomeScreen(
                 modifier = modifier
                     .padding(innerPadding),
                 retryAction = {
-                    viewModel.getMealsByName(viewModel.searchQuery.value)
+                    viewModel.refreshMeals()
                 }
             )
 
@@ -91,10 +88,9 @@ fun HomeScreen(
     }
 }
 
-
 @Composable
 fun HomeSuccess(
-    mealList: List<Meal>?,
+    mealList: List<MealEntity>,
     navController: NavHostController,
     viewModel: HomeViewModel,
     modifier: Modifier = Modifier
@@ -115,31 +111,19 @@ fun HomeSuccess(
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        if (mealList != null) {
-            LazyColumn(
-                modifier = Modifier.padding(horizontal = 20.dp)
-            ) {
-                items(items = mealList) { meal ->
-                    MealItem(
-                        meal = meal,
-                        navigateTo = {
-                            navController.navigate(
-                                "${DetailDestination.route.substringBefore("/")}/${meal.idMeal}"
-                            )
-                        }
-                    )
-                    Spacer(modifier = Modifier.height(30.dp))
-                }
-            }
-        } else {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = stringResource(R.string.no_meals_found),
-                    color = Color.Gray
+        LazyColumn(
+            modifier = Modifier.padding(horizontal = 20.dp)
+        ) {
+            items(items = mealList) { meal ->
+                MealItem(
+                    meal = meal,
+                    navigateTo = {
+                        navController.navigate(
+                            "${DetailDestination.route.substringBefore("/")}/${meal.idMeal}"
+                        )
+                    }
                 )
+                Spacer(modifier = Modifier.height(30.dp))
             }
         }
     }

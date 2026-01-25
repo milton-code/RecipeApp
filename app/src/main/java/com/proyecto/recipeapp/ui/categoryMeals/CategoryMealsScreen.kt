@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.proyecto.recipeapp.R
+import com.proyecto.recipeapp.data.local.entities.MealEntity
 import com.proyecto.recipeapp.data.models.Meal
 import com.proyecto.recipeapp.ui.AppViewModelProvider
 import com.proyecto.recipeapp.ui.RecipeTopAppBar
@@ -46,9 +47,9 @@ fun CategoryMealsScreen(
     viewModel: CategoryMealsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ){
     val uiState = viewModel.categoryMealsUiState.collectAsState()
-    LaunchedEffect(key1 = viewModel.categoryStr) {
+    /*LaunchedEffect(key1 = viewModel.categoryStr) {
         viewModel.getMealsByCategory(viewModel.categoryStr)
-    }
+    }*/
     Scaffold(
         topBar = {
             RecipeTopAppBar(
@@ -62,7 +63,7 @@ fun CategoryMealsScreen(
             CategoryMealsUiState.Error -> ErrorScreen(
                 modifier = modifier
                     .padding(innerPadding),
-                retryAction = { viewModel.getMealsByCategory(viewModel.categoryStr) }
+                retryAction = { /*viewModel.getMealsByCategory(viewModel.categoryStr)*/ }
             )
             CategoryMealsUiState.Loading -> LoadingScreen(
                 modifier
@@ -81,7 +82,7 @@ fun CategoryMealsScreen(
 fun CategoryMealsSuccess(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    mealList: List<Meal>?
+    mealList: List<MealEntity>?
 ) {
     Box(modifier = modifier) {
         if (mealList != null) {

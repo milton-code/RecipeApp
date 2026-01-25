@@ -1,5 +1,6 @@
 package com.proyecto.recipeapp.ui.home
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,8 +19,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.flatMap
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -33,10 +34,6 @@ class HomeViewModel(private val repository: MealRepository): ViewModel() {
         object Error: HomeUiState
         data class Success(val meals: List<MealEntity>): HomeUiState
     }
-    var onSearchFocus by mutableStateOf(false)
-        private set
-
-    //private val _homeUiState: MutableStateFlow<HomeUiState> = MutableStateFlow(HomeUiState.Loading)
     private val errorState = MutableStateFlow<Boolean>(false)
     val homeUiState: StateFlow<HomeUiState> =
         combine(errorState, repository.getMealsStream()) { error, meals ->
@@ -59,16 +56,30 @@ class HomeViewModel(private val repository: MealRepository): ViewModel() {
         //onSearchQueryChange()
         initialSync()
     }
-
     var isFocused by mutableStateOf(false)
         private set
     val searchQuery = MutableStateFlow("")
 
-
-    init {
-        onSearchQueryChange()
+    private fun initialSync() {
+        viewModelScope.launch {
+            val meals = repository.getMealsStream().firstOrNull()?: emptyList()
+            if (meals.isEmpty()) {
+                refreshMeals()
+            }
+        }
     }
-    @OptIn(FlowPreview::class)
+    fun refreshMeals() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repository.refreshMeals()
+            } catch (e: IOException) {
+                Log.e("HomeViewModel", "Error refreshing meals: ${e.message}")
+                errorState.value = true
+            }
+        }
+    }
+
+    /*@OptIn(FlowPreview::class)
     fun onSearchQueryChange() {
         viewModelScope.launch {
             searchQuery
@@ -77,7 +88,7 @@ class HomeViewModel(private val repository: MealRepository): ViewModel() {
                     getMealsByName(name)
                 }
         }
-    }
+    }*/
 
     fun searchQueryChange(query: String) {
         searchQuery.value = query
@@ -88,7 +99,7 @@ class HomeViewModel(private val repository: MealRepository): ViewModel() {
     }
 
 
-    fun getMealsByName(name: String) {
+    /*fun getMealsByName(name: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8.toString())
@@ -98,6 +109,6 @@ class HomeViewModel(private val repository: MealRepository): ViewModel() {
                 _homeUiState.value = HomeUiState.Error
             }
         }
-    }
+    }*/
 
 }
