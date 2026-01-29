@@ -38,7 +38,8 @@ object AppViewModelProvider {
         }
         initializer {
             AddRecipeViewModel(
-                recipeApplication().container.mealRepository
+                recipeApplication().container.mealRepository,
+                recipeApplication()
             )
         }
     }

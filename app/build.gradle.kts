@@ -70,10 +70,10 @@ dependencies {
     implementation(libs.retrofit2.kotlinx.serialization.converter)
     //lifecycle aware viewmodel
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation("androidx.compose.material:material-icons-extended-android:1.7.8")
+    implementation(libs.androidx.compose.material.icons.extended.android)
     //Room
     implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
     ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
-    implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
+    implementation(libs.androidx.room.ktx)
 
 }

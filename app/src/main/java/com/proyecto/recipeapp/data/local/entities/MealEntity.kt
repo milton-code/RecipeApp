@@ -12,5 +12,6 @@ data class MealEntity(
     val strCategory: String,
     val strInstructions: String,
     val strMealThumb: String,
-    val isCustom: Boolean = false // True for user-created recipes
+    val isCustom: Boolean = false, // True for user-created recipes
+    val isFavorite: Boolean = false
 )

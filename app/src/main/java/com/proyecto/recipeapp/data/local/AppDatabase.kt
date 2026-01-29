@@ -9,7 +9,7 @@ import com.proyecto.recipeapp.data.local.dao.MealDao
 import com.proyecto.recipeapp.data.local.entities.CategoryEntity
 import com.proyecto.recipeapp.data.local.entities.MealEntity
 
-@Database(entities = [MealEntity::class, CategoryEntity::class], version = 2, exportSchema = false)
+@Database(entities = [MealEntity::class, CategoryEntity::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun mealDao(): MealDao

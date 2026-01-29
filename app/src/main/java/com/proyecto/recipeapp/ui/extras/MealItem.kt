@@ -22,8 +22,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.proyecto.recipeapp.data.models.Meal
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.proyecto.recipeapp.R
@@ -67,7 +67,7 @@ fun MealItem(
                     .crossfade(true)
                     .build(),
                 contentScale = ContentScale.Crop,
-                contentDescription = "Recipe",
+                contentDescription = stringResource(R.string.recipe),
                 loading = {
                     LoadingImage()
                 },
@@ -77,7 +77,7 @@ fun MealItem(
                         ){
                             Icon(
                                 painter = painterResource(R.drawable.ic_broken_image),
-                                contentDescription = "Error al cargar imagen",
+                                contentDescription = stringResource(R.string.loading_image_error),
                                 tint = Color.Gray
                             )
                         }
@@ -101,12 +101,3 @@ fun MealItem(
         }
     }
 }
-
-/*@Preview(showBackground = true)
-@Composable
-fun MealItemPreview() {
-    MealItem(
-        meal = meal,
-        navigateTo = {}
-    )
-}*/

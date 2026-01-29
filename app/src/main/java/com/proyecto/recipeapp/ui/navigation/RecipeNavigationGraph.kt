@@ -39,8 +39,8 @@ fun RecipeNavHost(
             arguments = listOf(navArgument(DetailDestination.mealIdArg) {
                 type = NavType.IntType// ¡Muy importante! Define el tipo
             })
-        ) { navBackStackEntry ->
-            navBackStackEntry.arguments?.getInt(DetailDestination.mealIdArg)
+        ) { /*navBackStackEntry ->
+            navBackStackEntry.arguments?.getInt(DetailDestination.mealIdArg)*/
             DetailScreen(
                 navigateBack = { navController.navigateUp() },
                 modifier = Modifier.fillMaxSize()
@@ -69,7 +69,6 @@ fun RecipeNavHost(
         composable(route = AddRecipeDestination.route) {
             AddRecipeScreen(
                 modifier = Modifier.fillMaxSize(),
-                navController = navController,
                 navigateBack = {navController.navigateUp()}
             )
         }

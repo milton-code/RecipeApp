@@ -1,7 +1,6 @@
 package com.proyecto.recipeapp.ui.home
 
 import android.util.Log
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,41 +8,81 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proyecto.recipeapp.data.MealRepository
 import com.proyecto.recipeapp.data.local.entities.MealEntity
-import com.proyecto.recipeapp.data.models.Meal
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.IOException
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
+import kotlin.collections.emptyList
 
 class HomeViewModel(private val repository: MealRepository): ViewModel() {
+    var onSearchFocus by mutableStateOf(false)
+        private set
+    //----Search State----//
+    val searchQuery = MutableStateFlow("")
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+    val onSearchState: StateFlow<List<MealEntity>> = searchQuery
+        .debounce(500)
+        .flatMapLatest { query ->
+            if(query.isEmpty()) {
+                flow {
+                    emit(emptyList())
+                }
+            }
+            else repository.getMealsByName(query)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptyList()
+        )
+    fun searchQueryChange(query: String) {
+        searchQuery.value = query
+    }
+    fun changeOnSearchFocus(focus: Boolean) {
+        onSearchFocus = focus
+    }
+
+    //----Starter State----//
     sealed interface HomeUiState{
         object Loading: HomeUiState
         object Error: HomeUiState
         data class Success(val meals: List<MealEntity>): HomeUiState
     }
-    private val errorState = MutableStateFlow<Boolean>(false)
+    private val errorState = MutableStateFlow(false)
+    val favoriteFilterState = MutableStateFlow(false)
+    val myRecipesFilterState = MutableStateFlow(false)
     val homeUiState: StateFlow<HomeUiState> =
-        combine(errorState, repository.getMealsStream()) { error, meals ->
+        combine(
+            errorState,
+            repository.getMealsStream(),
+            favoriteFilterState,
+            myRecipesFilterState
+        ) { error, meals, favoriteFilter, myRecipesFilter ->
             if (error) {
                 HomeUiState.Error
             } else {
                 if (meals.isEmpty()) {
                     HomeUiState.Loading
                 } else {
-                    HomeUiState.Success(meals)
+                    if (favoriteFilter && myRecipesFilter) {
+                        HomeUiState.Success((meals.filter { it.isFavorite })
+                            .filter { it.isCustom })
+                    } else if (favoriteFilter){
+                        HomeUiState.Success(meals.filter { it.isFavorite })
+                    } else if (myRecipesFilter) {
+                        HomeUiState.Success(meals.filter { it.isCustom })
+                    } else {
+                        HomeUiState.Success(meals)
+                    }
                 }
             }
         }.stateIn(
@@ -53,12 +92,8 @@ class HomeViewModel(private val repository: MealRepository): ViewModel() {
         )
 
     init {
-        //onSearchQueryChange()
         initialSync()
     }
-    var isFocused by mutableStateOf(false)
-        private set
-    val searchQuery = MutableStateFlow("")
 
     private fun initialSync() {
         viewModelScope.launch {
@@ -79,36 +114,11 @@ class HomeViewModel(private val repository: MealRepository): ViewModel() {
         }
     }
 
-    /*@OptIn(FlowPreview::class)
-    fun onSearchQueryChange() {
-        viewModelScope.launch {
-            searchQuery
-                .debounce(500L)
-                .collectLatest { name ->
-                    getMealsByName(name)
-                }
-        }
-    }*/
-
-    fun searchQueryChange(query: String) {
-        searchQuery.value = query
+    fun toggleFavoriteFilter() {
+        favoriteFilterState.value = !favoriteFilterState.value
     }
 
-    fun changeOnSearchFocus(focus: Boolean) {
-        onSearchFocus.value = focus
+    fun toggleMyRecipesFilter() {
+        myRecipesFilterState.value = !myRecipesFilterState.value
     }
-
-
-    /*fun getMealsByName(name: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8.toString())
-                val mealsList: List<Meal>? = repository.getMealsByName(encodedName).meals
-                _homeUiState.value = HomeUiState.Success(mealsList)
-            } catch (e: IOException) {
-                _homeUiState.value = HomeUiState.Error
-            }
-        }
-    }*/
-
 }

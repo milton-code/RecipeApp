@@ -13,7 +13,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,10 +27,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.proyecto.recipeapp.R
-import com.proyecto.recipeapp.data.models.Meal
+import com.proyecto.recipeapp.data.local.entities.MealEntity
 import com.proyecto.recipeapp.ui.AppViewModelProvider
-import com.proyecto.recipeapp.ui.RecipeTopAppBar
 import com.proyecto.recipeapp.ui.detail.DetailViewModel.DetailUiState
+import com.proyecto.recipeapp.ui.extras.DetailTopAppBar
 import com.proyecto.recipeapp.ui.extras.ErrorScreen
 import com.proyecto.recipeapp.ui.extras.LoadingImage
 import com.proyecto.recipeapp.ui.extras.LoadingScreen
@@ -50,37 +49,35 @@ fun DetailScreen(
     viewModel: DetailViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState = viewModel.detailUiState.collectAsState()
-    LaunchedEffect(key1 = viewModel.mealId) {
-        viewModel.getMealById(viewModel.mealId)
-    }
     when (uiState.value) {
         DetailUiState.Loading -> LoadingScreen(modifier)
         DetailUiState.Error -> ErrorScreen(
             modifier,
-            retryAction = { viewModel.getMealById(viewModel.mealId) }
+            retryAction = {}
         )
 
         is DetailUiState.Success -> DetailSuccess(
             meal = (uiState.value as DetailUiState.Success).meal,
             navigateBack = navigateBack,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = viewModel
         )
     }
 }
 
 @Composable
 fun DetailSuccess(
-    meal: Meal,
+    meal: MealEntity,
     navigateBack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: DetailViewModel
 ) {
     Scaffold(
         topBar = {
-            RecipeTopAppBar(
-                title = meal.strMeal,
-                canNavigateBack = true,
-                showFavoriteIcon = true,
-                navigateUp = navigateBack
+            DetailTopAppBar(
+                meal = meal,
+                navigateUp = navigateBack,
+                viewModel = viewModel
             )
         }
     ) { innerPadding ->

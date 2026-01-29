@@ -18,6 +18,10 @@ class MealRepository(
      *Local
      */
     fun getMealsStream(): Flow<List<MealEntity>> = mealDao.getAllMeals()
+    fun getMealsByName(name: String): Flow<List<MealEntity>> = mealDao.getMealsByName(name)
+    fun getMealById(id: Int): Flow<MealEntity?> = mealDao.getMealById(id)
+    suspend fun updateMeal(meal: MealEntity) = mealDao.updateMeal(meal)
+    suspend fun deleteMeal(meal: MealEntity) = mealDao.deleteMeal(meal)
 
     //Devuelve un flujo de categorías desde la base de datos local.
     fun getCategoriesStream(): Flow<List<CategoryEntity>> = categoryDao.getAllCategories()
@@ -33,7 +37,6 @@ class MealRepository(
         )
         mealDao.insertMeal(mealEntity)
     }
-    //fun getLocalMeals(): Flow<List<MealEntity>> = categoryDao.getLocalMeals()
 
     /**
      * Refresca las categorías desde la API si la base de datos local está vacía.
@@ -75,17 +78,9 @@ class MealRepository(
                     )
                 }
                 mealDao.insertMeals(entities)
-            } /*else {
-                throw Exception("no meals found")
-            }*/
+            }
         } catch (e: Exception) {
             throw e
         }
     }
-
-    //API
-    suspend fun getMealById(id: Int): MealResponse = mealApiService.getMealById(id)
-    suspend fun getMealsByName(name: String): MealResponse = mealApiService.getMealsByName(name)
-    suspend fun getMealsByCategory(category: String): MealResponse =
-        mealApiService.getMealsByCategory(category)
 }

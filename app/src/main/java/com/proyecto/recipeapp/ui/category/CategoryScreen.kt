@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,7 +20,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.proyecto.recipeapp.R
 import com.proyecto.recipeapp.data.local.entities.CategoryEntity
-import com.proyecto.recipeapp.data.models.Meal
 import com.proyecto.recipeapp.ui.AppViewModelProvider
 import com.proyecto.recipeapp.ui.RecipeTopAppBar
 import com.proyecto.recipeapp.ui.category.CategoryViewModel.CategoryUiState
@@ -29,7 +27,6 @@ import com.proyecto.recipeapp.ui.categoryMeals.CategoryMealsDestination
 import com.proyecto.recipeapp.ui.extras.CategoryItem
 import com.proyecto.recipeapp.ui.extras.ErrorScreen
 import com.proyecto.recipeapp.ui.extras.LoadingScreen
-import com.proyecto.recipeapp.ui.extras.MealItem
 import com.proyecto.recipeapp.ui.navigation.NavigationDestination
 
 object CategoryDestination : NavigationDestination {
@@ -73,7 +70,6 @@ fun CategoryScreen(
             is CategoryUiState.Success -> CategorySuccess(
                     categoryList = (uiState.value as CategoryUiState.Success).categories,
                     navController = navController,
-                    viewModel = viewModel,
                     modifier = modifier.padding(innerPadding)
                 )
 
@@ -86,11 +82,9 @@ fun CategoryScreen(
 fun CategorySuccess(
     categoryList: List<CategoryEntity>,
     navController: NavHostController,
-    viewModel: CategoryViewModel,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier) {
-
             LazyColumn(
                 modifier = Modifier.padding(horizontal = 20.dp)
             ) {

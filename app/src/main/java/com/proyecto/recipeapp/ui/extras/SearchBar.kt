@@ -27,11 +27,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.proyecto.recipeapp.R
-import com.proyecto.recipeapp.ui.AppViewModelProvider
 import com.proyecto.recipeapp.ui.home.HomeViewModel
 
 @Composable
@@ -39,7 +36,7 @@ fun SearchBar(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel
 ) {
-    val isFocused = viewModel.isFocused
+    val isFocused = viewModel.onSearchFocus
     val focusManager = LocalFocusManager.current
 
     Row(
@@ -54,7 +51,7 @@ fun SearchBar(
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .clickable {
-                        viewModel.changeFocus(false)
+                        viewModel.changeOnSearchFocus(false)
                         focusManager.clearFocus()
                         viewModel.searchQueryChange("")
                     }
@@ -74,12 +71,12 @@ fun SearchBar(
             )
             SearchTextField(
                 modifier = Modifier.fillMaxWidth(),
-                text = viewModel.searchQuery.collectAsState().value,//text
+                text = viewModel.searchQuery.collectAsState().value,
                 onTextChange = {
                     viewModel.searchQueryChange(it)
                 },
                 onFocusChange = { focusState ->
-                    viewModel.changeFocus(focusState)
+                    viewModel.changeOnSearchFocus(focusState)
                 }
             )
         }
@@ -125,16 +122,4 @@ fun SearchTextField(
             container = {}
         )
     }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun SearchBarPreview() {
-    SearchBar(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp),
-        viewModel = viewModel(factory = AppViewModelProvider.Factory)
-    )
 }

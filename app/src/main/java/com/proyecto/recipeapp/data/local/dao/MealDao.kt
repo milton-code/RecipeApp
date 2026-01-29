@@ -22,14 +22,12 @@ interface MealDao {
 
     @Delete
     suspend fun deleteMeal(meal: MealEntity)
-    /*@Query("DELETE FROM meals WHERE isCustom = 0")
-    suspend fun deleteAllApiMeals()*/
-
-    /*@Query("SELECT * FROM meals WHERE isCustom = 1")
-    fun getLocalMeals(): Flow<List<MealEntity>>*/
 
     @Query("SELECT * FROM meals ORDER BY strMeal ASC")
     fun getAllMeals(): Flow<List<MealEntity>>
+
+    @Query("SELECT * FROM meals WHERE strMeal LIKE '%' || :name || '%' ORDER BY strMeal ASC")
+    fun getMealsByName(name: String): Flow<List<MealEntity>>
 
     @Query("SELECT * FROM meals WHERE id = :id")
     fun getMealById(id: Int): Flow<MealEntity?>

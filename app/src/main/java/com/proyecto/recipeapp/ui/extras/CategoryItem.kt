@@ -25,13 +25,11 @@ import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.proyecto.recipeapp.R
 import com.proyecto.recipeapp.data.local.entities.CategoryEntity
-import com.proyecto.recipeapp.data.models.Category
 
 @Composable
 fun CategoryItem(
     category: CategoryEntity,
-    navigateTo: () -> Unit,
-    modifier: Modifier = Modifier
+    navigateTo: () -> Unit
 ) {
     Card(
         onClick = navigateTo,
@@ -71,7 +69,7 @@ fun CategoryItem(
                 )
             }
 
-            Box(/////////////////
+            Box(
                 modifier = Modifier
                     .padding(start = 20.dp)
                     .fillMaxSize(),
