@@ -30,7 +30,6 @@ import com.proyecto.recipeapp.R
 import com.proyecto.recipeapp.data.local.entities.MealEntity
 import com.proyecto.recipeapp.ui.AppViewModelProvider
 import com.proyecto.recipeapp.ui.detail.DetailViewModel.DetailUiState
-import com.proyecto.recipeapp.ui.extras.DetailTopAppBar
 import com.proyecto.recipeapp.ui.extras.ErrorScreen
 import com.proyecto.recipeapp.ui.extras.LoadingImage
 import com.proyecto.recipeapp.ui.extras.LoadingScreen
@@ -99,6 +98,7 @@ fun MealDetail(
         modifier = modifier.padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(20.dp))
         Box(modifier = Modifier.clip(shape = RoundedCornerShape(15.dp))) {
             SubcomposeAsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)

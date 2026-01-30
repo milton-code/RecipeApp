@@ -1,6 +1,7 @@
 package com.proyecto.recipeapp.ui.category
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -84,7 +85,8 @@ fun CategorySuccess(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier) {
+    Column(modifier = modifier) {
+        Spacer(modifier = Modifier.height(30.dp))
             LazyColumn(
                 modifier = Modifier.padding(horizontal = 20.dp)
             ) {

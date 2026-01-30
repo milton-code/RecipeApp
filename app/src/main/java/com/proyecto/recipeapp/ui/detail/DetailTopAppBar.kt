@@ -1,4 +1,4 @@
-package com.proyecto.recipeapp.ui.extras
+package com.proyecto.recipeapp.ui.detail
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,8 +10,10 @@ import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,7 +21,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.proyecto.recipeapp.R
 import com.proyecto.recipeapp.data.local.entities.MealEntity
-import com.proyecto.recipeapp.ui.detail.DetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,17 +33,24 @@ fun DetailTopAppBar(
     val context = LocalContext.current
     TopAppBar(
         title = {
-            Text(meal.strMeal)
+            Text(meal.strMeal,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
         },
         modifier = modifier,
         navigationIcon = {
             IconButton(onClick = navigateUp) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.back_button)
+                    contentDescription = stringResource(R.string.back_button),
                 )
             }
         },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+        ),
         actions = {
             if(meal.isCustom) {
                 IconButton(onClick = {
@@ -54,7 +62,6 @@ fun DetailTopAppBar(
                     Icon(
                         imageVector = Icons.Default.Delete,
                         modifier = Modifier.fillMaxSize(0.75f),
-                        tint = Color.Gray,
                         contentDescription = stringResource(R.string.delete_button)
                     )
                 }
@@ -80,7 +87,6 @@ fun DetailTopAppBar(
                     Icon(
                         imageVector = Icons.Default.StarBorder,
                         modifier = Modifier.fillMaxSize(0.75f),
-                        tint = Color.Gray,
                         contentDescription = stringResource(R.string.favorites_button)
                     )
                 }

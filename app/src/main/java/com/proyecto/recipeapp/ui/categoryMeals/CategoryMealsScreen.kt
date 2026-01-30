@@ -1,6 +1,7 @@
 package com.proyecto.recipeapp.ui.categoryMeals
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -73,7 +74,8 @@ fun CategoryMealsSuccess(
     navController: NavHostController,
     mealList: List<MealEntity>
 ) {
-    Box(modifier = modifier) {
+    Column(modifier = modifier) {
+        Spacer(modifier = Modifier.height(30.dp))
         LazyColumn(
             modifier = Modifier.padding(horizontal = 20.dp)
         ) {

@@ -8,16 +8,16 @@ import com.proyecto.recipeapp.ui.category.CategoryDestination
 sealed interface ChipItem {
     data class Category(val onClick: (NavHostController) -> Unit) : ChipItem
     data class AddRecipe(val onClick: (NavHostController) -> Unit) : ChipItem
-    data class Favorites(val onClick: () -> Unit) : ChipItem
-    data class MyRecipes(val onClick: () -> Unit) : ChipItem
+    object Favorites : ChipItem
+    object MyRecipes : ChipItem
 
 }
 
 val chipList = listOf(
     ChipItem.Category { it.navigate(CategoryDestination.route) },
     ChipItem.AddRecipe { it.navigate(AddRecipeDestination.route) },
-    ChipItem.MyRecipes { },
-    ChipItem.Favorites { },
+    ChipItem.MyRecipes,
+    ChipItem.Favorites,
 )
 
 

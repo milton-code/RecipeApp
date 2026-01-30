@@ -4,10 +4,13 @@ package com.proyecto.recipeapp.ui.home
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -77,14 +80,14 @@ fun HomeScreenTop(
         SearchBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp),
+                .padding(horizontal = 20.dp, vertical = 16.dp),
             viewModel = viewModel
         )
         if(!viewModel.onSearchFocus){
             LazyRow(
-                modifier = Modifier
-                    .padding(horizontal = 20.dp, vertical = 10.dp)
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .height(32.dp)
             ) {
                 items(items = chipList) { chipItem ->
                     ChipRenderer(
@@ -95,8 +98,6 @@ fun HomeScreenTop(
                     Spacer(modifier = Modifier.width(10.dp))
                 }
             }
-        } else {
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
@@ -144,10 +145,10 @@ fun HomeScreenBody(
 @Composable
 fun HomeSuccess(
     mealList: List<MealEntity>,
-    navController: NavHostController,
-    modifier: Modifier = Modifier
+    navController: NavHostController
 ) {
-    Box(modifier = modifier) {
+    Column {
+        Spacer(modifier = Modifier.height(16.dp))
         LazyColumn(
             modifier = Modifier.padding(horizontal = 20.dp)
         ) {
@@ -160,7 +161,7 @@ fun HomeSuccess(
                         )
                     }
                 )
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }
