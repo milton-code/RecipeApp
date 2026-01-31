@@ -1,10 +1,5 @@
 package com.proyecto.recipeapp.ui.extras
 
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Category
@@ -14,13 +9,12 @@ import androidx.compose.material3.AssistChip
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.proyecto.recipeapp.R
 import com.proyecto.recipeapp.data.models.ChipItem
@@ -44,7 +38,6 @@ fun ChipRenderer(
                 )
             },
             onClick = { chipItem.onClick(navController) },
-            //modifier = Modifier.padding(vertical = 0.dp).height(IntrinsicSize.Min)
         )
 
         is ChipItem.MyRecipes -> {
@@ -60,13 +53,12 @@ fun ChipRenderer(
             onClick = {
                 viewModel.toggleMyRecipesFilter()
             },
-                //modifier = Modifier.padding(vertical = 0.dp).height(IntrinsicSize.Min),
             selected = selected.value,
             colors = FilterChipDefaults.filterChipColors(
-                selectedContainerColor = Color(0xFF2D7230),
-                selectedLabelColor = Color.White,
+                selectedContainerColor = MaterialTheme.colorScheme.primary,
+                selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
                 iconColor = Color.Gray,
-                selectedLeadingIconColor = Color.White
+                selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimary
             )
         )
     }
@@ -81,16 +73,15 @@ fun ChipRenderer(
                         contentDescription = null
                     )
                 },
-                //modifier = Modifier.padding(vertical = 0.dp).height(IntrinsicSize.Min),
                 onClick = {
                     viewModel.toggleFavoriteFilter()
                 },
                 selected = selected.value,
                 colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = Color(0xFF2D7230),
-                    selectedLabelColor = Color.White,
+                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
                     iconColor = Color.Gray,
-                    selectedLeadingIconColor = Color.White
+                    selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         }
@@ -104,7 +95,6 @@ fun ChipRenderer(
                     contentDescription = null
                 )
             },
-            //modifier = Modifier.padding(vertical = 0.dp).height(IntrinsicSize.Min),
             onClick = { chipItem.onClick(navController) }
         )
     }

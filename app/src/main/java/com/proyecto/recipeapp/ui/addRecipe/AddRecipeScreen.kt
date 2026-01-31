@@ -204,6 +204,7 @@ fun CategoryDropdown(
         )
         ExposedDropdownMenu(
             expanded = isExpanded,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
             onDismissRequest = { isExpanded = false }
         ) {
             when (dropdownMenuState.value) {

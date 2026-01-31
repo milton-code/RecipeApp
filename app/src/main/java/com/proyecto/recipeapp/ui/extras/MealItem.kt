@@ -56,6 +56,9 @@ fun MealItem(
                 topEnd = CornerSize(15.dp),
                 bottomEnd = CornerSize(15.dp)
             ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer
+        ),
         modifier = Modifier
     ) {
         Row (modifier = Modifier

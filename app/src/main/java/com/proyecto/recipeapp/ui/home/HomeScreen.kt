@@ -1,6 +1,7 @@
 package com.proyecto.recipeapp.ui.home
 
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -49,6 +50,10 @@ fun HomeScreen(
     navController: NavHostController,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    BackHandler(enabled = viewModel.onSearchFocus) {
+        viewModel.changeOnSearchFocus(false)
+    }
+
     Scaffold(
         topBar = {
             RecipeTopAppBar(
@@ -85,7 +90,8 @@ fun HomeScreenTop(
         )
         if(!viewModel.onSearchFocus){
             LazyRow(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(horizontal = 20.dp)
                     .height(32.dp)
             ) {
